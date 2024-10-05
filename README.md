@@ -28,7 +28,7 @@ This project utilizes **R programming** to analyze and visualize the distributio
    ```
 
 ### Usage
-1. Open the `wikipedia_usage_analysis.Rmd` file in RStudio or any R environment.
+1. Open the `Wikipedia Usage Probability Analysis.Rmd` file in RStudio or any R environment.
 2. Run the script to compute probabilities and generate PMF plots for Wikipedia usage among students.
 
 Witness the statistical magic as the script reveals insights into student engagement with Wikipedia!
