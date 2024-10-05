@@ -1,0 +1,514 @@
+---
+title: "Wikipedia Usage Probability Analysis"
+author: "By Samuel Abrha G.mariam"
+date: "2024-05-11"
+output: html_document
+---
+
+# Problem
+
+A recent national study showed that approximately 44.7% of college students have used Wikipedia as a source in at least one of their term papers. Let X equal the number of students in a random sample of size n = 31 who have used Wikipedia as a source.
+
+1.  How is X distributed?
+
+2.  Generate and plot the probability mass function.
+
+3.  Generate and plot the cumulative distribution function.
+
+4.  Find the probability that X is:
+
+    -   equal to 17.
+
+    -   at most 13.
+
+    -   greater than 11.
+
+    -   at least 15.
+
+    -   between 16 and 19, inclusive.
+
+5\. Give the mean of X, denoted E(X).
+
+6\. Give the variance and standard deviation of X.
+
+## Distribution of the discrete variable X
+
+X represents the number of college students in a random sample of size 31 who have used Wikipedia as a source in at least one of their term papers.
+
+1.  **Distribution Type**:
+
+    -   **Binomial Distribution**: The distribution of $X$ follows a binomial distribution. A binomial distribution describes the number of successes in a fixed number of independent Bernoulli trials, where each trial has only two possible outcomes (success or failure), and the probability of success remains constant across all trials.
+
+    In the case of this study:
+
+-   Each trial is a college student being sampled.
+-   The "success" is a student using Wikipedia as a source.
+-   The "failure" is a student not using Wikipedia as a source.
+-   The sample size is fixed at 31.
+    -   **Parameters**:
+        -   $n$: The sample size (number of students in the sample) is 31.
+        -   $p$: The probability of success (using Wikipedia as a source) is approximately 0.447 (based on the national study).
+        -   $q = 1 - p$: The probability of failure (not using Wikipedia as a source) is approximately 0.553.
+
+Therefore, the random variable X representing the number of students using Wikipedia in a sample of 31 follows a binomial distribution with parameters n = 31, p = 0.447, and q = 0.553.
+
+2.  **Probability Mass Function (PMF)**:
+    -   The PMF gives the probability of observing a specific value of $X$: $$ P(X = k) = \binom{n}{k} \cdot p^k \cdot q^{n - k} $$
+3.  **Expected Value (Mean)**:
+    -   The expected number of students who have used Wikipedia as a source: $$ E(X) = n \cdot p $$
+4.  **Variance**:
+    -   The variance measures the spread of the distribution: $$ \text{Var}(X) = n \cdot p \cdot q $$
+5.  **Standard Deviation**:
+    -   The standard deviation is the square root of the variance: $$ \sigma(X) = \sqrt{\text{Var}(X)} $$
+6.  **Interpretation**:
+    -   The binomial distribution models the number of successes (students using Wikipedia) out of a fixed number of independent trials (students in the sample).
+    -   It is appropriate when each trial has two possible outcomes (success or failure) and the trials are independent.
+    -   In our case, a "success" is a student using Wikipedia as a source.
+
+Remember that this distribution assumes that each student's decision to use Wikipedia is independent of others, which may or may not be true in practice. Additionally, the binomial distribution is an approximation, especially when dealing with large sample sizes.
+
+## The probability mass function plot
+
+The Probability Mass Function (PMF) provides the probabilities of a discrete random variable taking specific values. In the context of our study, where X represents the number of college students in a sample of 31 who have used Wikipedia as a source, the PMF gives the probabilities of different values of X.
+
+-   **Binomial Distribution**: the PMF follows a binomial distribution. The binomial PMF is defined by the formula: $$ P(X = k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$ Where:
+    -   $X$ is the random variable (number of students using Wikipedia).
+    -   $k$ is a specific value of $X$ (e.g., 10 students).
+    -   $n$ is the sample size (31 in our case).
+    -   $p$ is the probability of success in each trial (using Wikipedia, approximately 0.447).
+    -   $\binom{n}{k}$ is the binomial coefficient, representing the number of ways to choose $k$ successes from $n$ trials.
+
+First, let's organize our data to be plotted into a dataframe. We are going to plot X(on x-axis) against their probabilities(on Y-axis). We will have 32 values in the x-axis because our possible outcomes are {0, 1, 2, ... , 31} and corresponding values for each x value which are going to be on our y-axis.
+
+```{r}
+# Defining parameters
+n <- 31  # Sample size
+p <- 0.447  # Probability of success (using Wikipedia)
+
+# Generate values for X (number of successes) from 0 to n
+X_values <- 0:n
+
+# Calculate probabilities for each value of X using dbinom function
+probabilities <- dbinom(X_values, size = n, prob = p)
+
+# Create a data frame for plotting
+pmf_data <- data.frame(X = X_values, Probability = probabilities)
+pmf_data
+```
+
+```{r}
+# Loading the necessary library
+library(ggplot2)
+
+# Plotting the probability mass function (PMF)
+ggplot(pmf_data, aes(x = X, y = Probability)) +
+  geom_bar(stat = "identity", width = 0.8, fill = "skyblue") +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+-   **Interpretation**:
+    -   **PMF Values**: Each bar on the PMF plot represents the probability of a specific outcome. For example, if X is the number of students using Wikipedia, and X = 10, then the value on the PMF plot at X = 10 gives the probability that exactly 10 students out of the 31 have used Wikipedia as a source.
+
+    -   The PMF plot shows a peak at X = 14, it means that the most likely outcome in our sample of 31 students is that 14 students have used Wikipedia.
+
+    -   The PMF plot has a relatively long tail towards higher values of X, it indicates that scenarios with more students using Wikipedia are less likely.
+
+Overall, the PMF helps us understand the distribution of outcomes and the likelihood of different values of X occurring in your sample of college students.
+
+## The cumulative distribution function plot
+
+To plot the CDF, let's first organize our data. We will have 0-31 on our x-axis and approximately 0-1 on our y-axis.
+
+```{r}
+# Calculating cumulative probabilities using pbinom function
+cumulative_probabilities <- pbinom(X_values, size = n, prob = p)
+
+# Creating a data frame for plotting
+cdf_data <- data.frame(X = X_values, Cumulative_Probability = cumulative_probabilities)
+cdf_data
+```
+
+```{r}
+# Plot the cumulative distribution function (CDF) as a step function
+ggplot(cdf_data, aes(x = X, y = Cumulative_Probability)) +
+  geom_step() +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Cumulative Probability", title = "CDF") +
+  theme_minimal()
+```
+
+The graph represents the cumulative distribution function (CDF) for a binomial distribution with parameters $n = 31$ (sample size) and $p = 0.447$ (probability of success, i.e., a student using Wikipedia as a source).
+
+### CDF:
+
+The cumulative distribution function (CDF) of a discrete random variable $X$ is a function that gives the probability that $X$ takes on a value less than or equal to a specified value $x$. Mathematically, it's defined as:
+
+$$ F(x) = P(X \leq x) $$
+
+In the context of our graph, $F(x)$ represents the cumulative probability that the number of students using Wikipedia in a sample of 31 students is less than or equal to a specific value of $x$.
+
+### Interpretations of the Graph:
+
+1.  **Step Function**: The CDF graph for a discrete distribution like the binomial distribution is typically represented as a step function. Each step corresponds to the cumulative probability of the random variable $X$ being less than or equal to a specific value.
+
+2.  **Increasing Steps**: The steps in the graph increase as you move from left to right. This indicates that as the number of students using Wikipedia ($X$) increases, the cumulative probability of observing fewer or equal students using Wikipedia also increases.
+
+3.  **Interpretation at Specific Points**:
+
+    -   At $X = 0$: The CDF starts at 0, indicating that the cumulative probability of having 0 students using Wikipedia in the sample is almost 0.
+    -   At $X = 31$: The CDF reaches 1, indicating that the cumulative probability of having all 31 students or fewer using Wikipedia in the sample is 1.
+
+4.  **Threshold Interpretation**: For any specific value of $X$, the value of the CDF at that point represents the probability that the number of students using Wikipedia is less than or equal to that value. For example, if you look at $X = 20$, the value of the CDF at that point tells the probability that 20 or fewer students out of 31 have used Wikipedia as a source.
+
+Overall, the CDF graph visually represents how the cumulative probability of observing a certain number of students using Wikipedia changes as we vary the number of students in the sample.
+
+## Finding probabilities
+
+### The probability of X = 17
+
+In the context of our binomial distribution with parameters $n = 31$ (sample size) and $p = 0.447$ (probability of success, i.e., a student using Wikipedia as a source), the probability mass function (PMF) of the binomial distribution gives us this probability:$$ P(X = k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$
+
+Where:
+
+\- $n = 31$ is the sample size.
+
+\- $p = 0.447$ is the probability of success (a student using Wikipedia).
+
+\- $\binom{n}{k}$ is the binomial coefficient, representing the number of ways to choose $k$ successes from $n$ trials.
+
+**Probability that** $X$ is equal to 17
+
+Here, we're interested in finding the probability that exactly 17 students out of the 31 have used Wikipedia.
+
+Plugging in the values into the formula:
+
+$$ P(X = 17) = \binom{31}{17} \cdot 0.447^{17} \cdot (1 - 0.447)^{31 - 17} $$
+
+Calculating this probability gives us the probability that exactly 17 students out of the 31 have used Wikipedia.
+
+Next, let's do it using the dbinom function.
+
+```{r}
+# Calculating the probability using dbinom function
+probability_17 <- dbinom(17, size = 31, prob = 0.447)
+
+probability_17
+```
+
+Therefore, we have a probability of **0.07532248** of getting 17 students out of the 31 have used Wikipedia.
+
+#### Graphical representation
+
+```{r}
+# Defining colors for bars
+colors <- ifelse(pmf_data$X == 17, "blue", "skyblue")
+
+# Plotting the probability mass function (PMF) with different colors for bars
+ggplot(pmf_data, aes(x = X, y = Probability, fill = as.factor(X))) +
+  geom_bar(stat = "identity", width = 0.8) +
+  scale_fill_manual(values = colors) +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+1.  **The blue Bar**:
+    -   The blue bar in the graph represents the probability of observing 17 students using Wikipedia in a sample of 31 students. This bar is highlighted in a different color (e.g., red) to distinguish it from the rest of the bars.
+2.  **Probability Calculation**:
+    -   The height of the bar represents the probability of observing 17 students using Wikipedia. In mathematical terms, it's $P(X = 17)$, which is the probability mass function (PMF) value for $X = 17$.
+3.  **Graphical Interpretation**:
+    -   The use of a different color (e.g., red) for this bar visually distinguishes it, highlighting the probability associated with observing exactly 17 students using Wikipedia in the sample.
+    -   This graphical representation helps in quickly identifying the probability for this specific outcome within the distribution.
+
+### The probability of $X \leq 13$
+
+The probability that $X$ is at most 13, denoted as $P(X \leq 13)$, represents the cumulative probability of observing 13 or fewer successes (students using Wikipedia) in a sample of 31 students.
+
+In a binomial distribution, the cumulative probability $P(X \leq x)$ up to a specific value $x$ is calculated by summing the probabilities of all possible outcomes from 0 to $x$.
+
+The formula for $P(X \leq 13)$ using the binomial cumulative distribution function (CDF) is:
+
+$$ P(X \leq 13) = \sum_{k=0}^{13} \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$
+
+Using this formula, we can calculate the exact probability that $X$ is at most 13 in the given binomial distribution.
+
+We can also use the **pbinom** function to calculate it, as follows.
+
+```{r}
+# Calculating the cumulative probability using pbinom function
+probability_l_or_e_13 <- pbinom(13, size = 31, prob = 0.447)
+
+probability_l_or_e_13
+```
+
+Therefore, we have a probability of **0.451357** of getting 13 or less students out of 31 that have used Wikipedia.
+
+#### Graphical representation
+
+```{r}
+# Defining colors for bars
+colors <- ifelse(pmf_data$X <= 13, "blue", "skyblue")
+
+# Plotting the probability mass function (PMF) with different colors for bars
+ggplot(pmf_data, aes(x = X, y = Probability, fill = as.factor(X))) +
+  geom_bar(stat = "identity", width = 0.8) +
+  scale_fill_manual(values = colors) +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+1.  **Blue Bars**:
+    -   The blue bars in the graph represent the probabilities for the number of students using Wikipedia less than or equal to 13. Each bar corresponds to a specific value of $X$, which represents the number of successes (students using Wikipedia) in the sample.
+    -   The first blue bar corresponds to $X = 0$, the second bar corresponds to $X = 1$, and so on up to $X = 13$.
+2.  **Probability Calculation**:
+    -   The probability represented by the blue bars for $X \leq 13$ is the sum of the corresponding values of these bars. This sum represents the cumulative probability of observing 13 or fewer students using Wikipedia in a sample of 31 students.
+    -   To calculate this probability, we add the probabilities represented by each blue bar from $X = 0$ to $X = 13$.
+3.  **Graphical Interpretation**:
+    -   The use of blue color for these bars visually distinguishes them, highlighting the range of outcomes less than or equal to 13.
+    -   This graphical representation is helpful in understanding the probability associated with observing a certain number of students using Wikipedia less than or equal to 13.
+
+### The probability of X \> 11
+
+The probability that $X$ is greater than 11, denoted as $P(X > 11)$, represents the cumulative probability of observing 12 or more successes (students using Wikipedia) in a sample of 31 students.
+
+In a binomial distribution, the cumulative probability $P(X \leq x)$ up to a specific value $x$ is calculated by summing the probabilities of all possible outcomes from 0 to $x$.
+
+The formula for $P(X > 11)$ using the binomial cumulative distribution function (CDF) is:
+
+$$ P(X > 11) = 1 - \sum_{k=0}^{11} \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$
+
+Using this formula, we can calculate the exact probability that $X$ is greater than 11.
+
+We can also use the **pbinom** function to do it, as follows.
+
+```{r}
+# Calculating the cumulative probability using pbinom function and subtract from 1
+probability_g_than_11 <- 1 - pbinom(11, size = 31, prob = 0.447)
+
+probability_g_than_11
+```
+
+Therefore, there is a probability of **0.8020339** of getting more than 11 students out of the 31 that have used Wikipedia.
+
+#### Graphical representation
+
+```{r}
+# Defining colors for bars
+colors <- ifelse(pmf_data$X > 11, "blue", "skyblue")
+
+# Plotting the probability mass function (PMF) with different colors for bars
+ggplot(pmf_data, aes(x = X, y = Probability, fill = as.factor(X))) +
+  geom_bar(stat = "identity", width = 0.8) +
+  scale_fill_manual(values = colors) +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+1.  **Blue Bars**:
+    -   The blue bars in the graph represent the probabilities for the number of students using Wikipedia greater than 11. Each bar corresponds to a specific value of $X$, which represents the number of successes (students using Wikipedia) in the sample.
+    -   The first blue bar corresponds to $X = 12$, the second bar corresponds to $X = 13$, and so on for all values of $X$ greater than 11.
+2.  **Probability Calculation**:
+    -   The probability represented by the blue bars for $X > 11$ is the sum of the corresponding values of these bars. This sum represents the cumulative probability of observing more than 11 students using Wikipedia in a sample of 31 students.
+    -   To calculate this probability, we add the probabilities represented by each blue bar from $X = 12$ to the maximum possible value of $X$.
+3.  **Graphical Interpretation**:
+    -   The use of blue color for these bars visually distinguishes them, highlighting the range of outcomes greater than 11.
+    -   This graphical representation is helpful in understanding the probability associated with observing a certain number of students using Wikipedia greater than 11 in our sample.
+
+### The probability of $X \geq 15$
+
+The probability that $X$ is greater than or equal to 15, denoted as $P(X \geq 15)$, represents the cumulative probability of observing 15 or more successes (students using Wikipedia) in a sample of 31 students.
+
+In a binomial distribution, the cumulative probability $P(X \leq x)$ up to a specific value $x$ is calculated by summing the probabilities of all possible outcomes from 0 to $x$.
+
+The formula for $P(X \geq 15)$ using the binomial cumulative distribution function (CDF) is:
+
+$$ P(X \geq 15) = 1 - \sum_{k=0}^{14} \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$
+
+Using this formula, we can calculate the exact probability that $X$ is greater than or equal to 15.
+
+We can also use the **pbinom** function to do it, as follows.
+
+```{r}
+# Calculating the cumulative probability using pbinom function
+probability_g_or_e_15 <- 1 - pbinom(14, size = 31, prob = 0.447)  # 1 - P(X < 15)
+
+probability_g_or_e_15
+```
+
+Therefore, we have a probability of **0.406024** of getting greater than or equal to 15 students out of the 31 that have used Wikipedia.
+
+#### Graphical representation
+
+```{r}
+# Defining colors for bars
+colors <- ifelse(pmf_data$X >= 15, "blue", "skyblue")
+
+# Plotting the probability mass function (PMF) with different colors for bars
+ggplot(pmf_data, aes(x = X, y = Probability, fill = as.factor(X))) +
+  geom_bar(stat = "identity", width = 0.8) +
+  scale_fill_manual(values = colors) +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+1.  **Blue Bars**:
+    -   The blue bars in the graph represent the probabilities for the number of students using Wikipedia starting from 15 and going up. Each bar corresponds to a specific value of $X$, which represents the number of successes (students using Wikipedia) in the sample.
+    -   Here, the first blue bar corresponds to $X = 15$, the second bar corresponds to $X = 16$, and so on for all values of $X$ greater than or equal to 15.
+2.  **Probability Calculation**:
+    -   The probability represented by the blue bars for $X \geq 15$ is the sum of the corresponding values of these bars. This sum represents the cumulative probability of observing 15 or more students using Wikipedia in a sample of 31 students.
+    -   To calculate this probability, we add the probabilities represented by each blue bar from $X = 15$ to the maximum possible value of $X$ in our distribution.
+3.  **Graphical Interpretation**:
+    -   The use of blue color for these bars visually distinguishes them, highlighting the range of outcomes starting from 15.
+    -   This graphical representation is helpful in understanding the probability associated with observing a certain number of students using Wikipedia equal to or greater than 15 in our sample.
+
+### The probability of $P(16\leq X \leq 19)$
+
+The probability that $X$ is between 16 and 19 (inclusive), denoted as $P(16\leq X \leq 19)$, represents the cumulative probability of observing between 16 and 19 successes (students using Wikipedia) in a sample of 31 students.
+
+In a binomial distribution, the cumulative probability $P(X \leq x)$ up to a specific value $x$ is calculated by summing the probabilities of all possible outcomes from 0 to $x$.
+
+The formula for $P(16\leq X \leq 19)$ using the binomial cumulative distribution function (CDF) is:
+
+$$ p(16\leq X \leq 19) = \sum_{k=0}^{19} \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k}- \sum_{k=0}^{15} \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k} $$
+
+Using this formula, we can calculate the exact probability that $X$ is greater than or equal to 15.
+
+We can also use the **pbinom** function to do it, as follows.
+
+```{r}
+# Calculating the cumulative probability using pbinom function
+probability_b_16_and_19 <- pbinom(19, size = 31, prob = 0.447) - pbinom(15, size = 31, prob = 0.447)
+
+probability_b_16_and_19
+```
+
+Therefore, the probability that from 16 up to 19 students out of the 31 have used Wikipedia is **0.2544758**.
+
+#### Graphical representation
+
+```{r}
+# Defining colors for bars
+colors <- ifelse(pmf_data$X >= 16 & pmf_data$X <= 19, "blue", "skyblue")
+
+# Plotting the probability mass function (PMF) with different colors for bars
+ggplot(pmf_data, aes(x = X, y = Probability, fill = as.factor(X))) +
+  geom_bar(stat = "identity", width = 0.8) +
+  scale_fill_manual(values = colors) +
+  labs(x = "Number of Students Using Wikipedia (X)", y = "Probability", title = "PMF") +
+  theme_minimal()
+```
+
+In the graph, the bars from 16 to 19 are shown in blue color. Each bar represents the probability of observing a specific number of students using Wikipedia in a sample of 31 students, based on the given probability $p$ of a student using Wikipedia as a source.
+
+1.  **Blue Bars**:
+    -   The bars colored in blue represent the probabilities for the number of students using Wikipedia ranging from 16 to 19 which are related to the question. Each bar corresponds to a specific value of $X$, which represents the number of successes (students using Wikipedia) in the sample.
+    -   The first blue bar corresponds to $X = 16$, the second bar corresponds to $X = 17$, and so on up to $X = 19$.
+2.  **Probability Calculation**:
+    -   The probability represented is the sum of the corresponding values of the blue bars. This sum represents the cumulative probability of observing between 16 and 19 students using Wikipedia in a sample of 31 students.
+    -   To calculate the probability of this range (16 to 19), we add the probabilities represented by each blue bar. In mathematical terms, it's $P(X = 16) + P(X = 17) + P(X = 18) + P(X = 19)$.
+3.  **Graphical Interpretation**:
+    -   The blue color distinguishes these bars from the rest, making it visually clear which bars are included in the calculation of the probability for the range 16 to 19.
+
+## Mean of X ( E(X) )
+
+The formula to calculate the mean of a binomial distribution is:
+
+E(X)=n⋅p
+
+Where:
+
+-   E(X) is the mean or expected value of X, representing the average number of successes.
+
+-   n is the sample size, which is 31 in this case.
+
+-   p is the probability of success on each trial, which is 0.447 in our case.
+
+Plugging in the values:
+
+E(X) = 31 \* 0.447 = 13.857
+
+Let's do it using the code below, which will give us the same result.
+
+```{r}
+# Calculating the mean of X using the formula
+mean_X <- n * p
+mean_X
+
+```
+
+So, in this context, the mean E(X) or μ of the binomial distribution is approximately **13.857**. This means that, on average, we would expect to observe around **14** students using Wikipedia as a source in a sample of 31 students.
+
+## Variance and Standard deviation of X
+
+### Variance
+
+The variance represents the measure of the spread or dispersion of the distribution. It quantifies how much the average squared deviation of values of $X$ (the number of successes, i.e., students using Wikipedia) from the mean ($E(X)$) is.
+
+The formula to calculate the variance ($\sigma^2$) of a binomial distribution is:
+
+$$ \sigma^2 = n \cdot p \cdot (1 - p) $$
+
+Where:
+
+\- $\sigma^2$ is the variance of $X$.
+
+\- $n$ is the sample size, which is 31.
+
+\- $p$ is the probability of success on each trial, which is 0.447.
+
+\- $(1 - p)$ represents the probability of failure on each trial.
+
+Plugging in the values:
+
+$$ \sigma^2 = 31 \cdot 0.447 \cdot (1 - 0.447) \approx 7.662921 $$
+
+We can also compute it using the following lines of code:
+
+```{r}
+# The probability of failure
+q = 1 - p
+
+# Calculating the variance of X using the formula
+var_X <- n * p * q
+
+var_X
+```
+
+So, the variance of approximately **7.662921** means that the values of $X$ in this binomial distribution are spread out around the mean ($E(X) = 13.857$). A larger variance indicates greater variability in the number of students using Wikipedia in different samples of 31 students, based on the given probability $p$.
+
+### Standard deviation
+
+The standard deviation represents the measure of the dispersion or spread of the distribution's values. It quantifies how much the values of $X$ (the number of successes, i.e., students using Wikipedia) deviate from the mean ($E(X)$) on average.
+
+The standard deviation ($\sigma$) is the square root of the variance ($\sigma^2$). The formula to calculate the standard deviation of a binomial distribution is:
+
+$$ \sigma = \sqrt{n \cdot p \cdot (1 - p)} $$
+
+Where:
+
+\- $\sigma$ is the standard deviation of $X$.
+
+\- $n$ is the sample size, which is 31 in this case.
+
+\- $p$ is the probability of success on each trial, which is 0.447 in our case.
+
+\- $(1 - p)$ represents the probability of failure on each trial.
+
+Plugging in the values:
+
+$$ \sigma = \sqrt{31 \cdot 0.447 \cdot (1 - 0.447)} \approx 2.768198 $$
+
+Now, let's do it using R.
+
+```{r}
+# Calculating the standard deviation of X using the formula
+std_X <- sqrt(var_X)
+
+std_X
+
+```
+
+Therefore, the standard deviation of approximately **2.768198** means that, on average, the number of students using Wikipedia in a sample of 31 students deviates from the mean ($E(X) = 13.857$) by about **2.768198**. It gives a measure of the typical amount of variation or uncertainty in the number of successes, based on the given probability $p$.
+
+# 
+
+# **Thank you!**
